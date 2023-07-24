@@ -79,12 +79,16 @@ func writeBillTo(pdf *gopdf.GoPdf, to string) {
 	pdf.Br(64)
 }
 
-func writeHeaderRow(pdf *gopdf.GoPdf) {
+func writeHeaderRow(pdf *gopdf.GoPdf, hourly bool) {
 	_ = pdf.SetFont("Inter", "", 9)
 	pdf.SetTextColor(55, 55, 55)
 	_ = pdf.Cell(nil, "ITEM")
 	pdf.SetX(quantityColumnOffset)
-	_ = pdf.Cell(nil, "QTY")
+	if hourly {
+		_ = pdf.Cell(nil, "HOURS")
+	} else {
+		_ = pdf.Cell(nil, "QTY")
+	}
 	pdf.SetX(rateColumnOffset)
 	_ = pdf.Cell(nil, "RATE")
 	pdf.SetX(amountColumnOffset)

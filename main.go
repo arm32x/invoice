@@ -38,6 +38,8 @@ type Invoice struct {
 	Currency string  `json:"currency" yaml:"currency"`
 
 	Note string `json:"note" yaml:"note"`
+
+	Hourly bool `json:"hourly" yaml:"hourly"`
 }
 
 func DefaultInvoice() Invoice {
@@ -54,6 +56,7 @@ func DefaultInvoice() Invoice {
 		Tax:        0,
 		Discount:   0,
 		Currency:   "USD",
+		Hourly:     false,
 	}
 }
 
@@ -86,6 +89,7 @@ func init() {
 	generateCmd.Flags().StringVarP(&file.Currency, "currency", "c", defaultInvoice.Currency, "Currency")
 
 	generateCmd.Flags().StringVarP(&file.Note, "note", "n", "", "Note")
+	generateCmd.Flags().BoolVar(&file.Hourly, "hourly", false, "Write HOURS instead of QTY")
 	generateCmd.Flags().StringVarP(&output, "output", "o", "invoice.pdf", "Output file (.pdf)")
 
 	flag.Parse()
@@ -129,7 +133,7 @@ var generateCmd = &cobra.Command{
 		writeLogo(&pdf, file.Logo, file.From)
 		writeTitle(&pdf, file.Title, file.Id, file.Date)
 		writeBillTo(&pdf, file.To)
-		writeHeaderRow(&pdf)
+		writeHeaderRow(&pdf, file.Hourly)
 		subtotal := 0.0
 		for i := range file.Items {
 			q := 1.0
